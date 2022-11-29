@@ -32,18 +32,22 @@ app.get('/api/notes', (req, res) =>{
     });
 });
 
+//Post a new note
 app.post('/api/notes', (req, res)=>{
-  
+//Deconstructs req.body for our params
 const {title, text} = req.body
-
+//if note has text and title, it creates a new const
 if(text && title){
     const userNote = {
         title,
         text,
     }
+//push new note to notes array
 notes.push(userNote)
+//stringifies notes to use in fs function
 const stringifyNote = JSON.stringify(notes)
-
+//Writes file at db.json 
+res.json(notes)
 fs.writeFile('./db/db.json', stringifyNote, (err)=>{
     if (err){
         console.log(err)
@@ -52,6 +56,9 @@ fs.writeFile('./db/db.json', stringifyNote, (err)=>{
 });
 }});
 
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '/index.html'));
+ });   
 
 
 //Listens to server
