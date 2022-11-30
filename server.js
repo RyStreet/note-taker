@@ -32,13 +32,18 @@ app.get('/api/notes', (req, res) =>{
     });
 });
 
+
+
 //Post a new note
 app.post('/api/notes', (req, res)=>{
 //Deconstructs req.body for our params
+
 const {title, text} = req.body
+var noteID = notes.length + 1;
 //if note has text and title, it creates a new const
 if(text && title){
     const userNote = {
+        id: noteID,
         title,
         text,
     }
@@ -55,6 +60,28 @@ fs.writeFile('./db/db.json', stringifyNote, (err)=>{
     console.log("Note Added!");
 });
 }});
+
+
+
+app.delete('/api/notes/:id', (req, res) => {
+    deleteNote(req.params.id, notes);
+    res.json(true);
+});
+
+const deleteNote = (noteID) =>{
+    for(let i = 0; i< notes.length; i++){
+        let note = notes[i]
+        if(note.id == noteID){
+            notes.splice(i, 1);
+            fs.writeFileSync(
+                path.join(__dirname, './db/db.json'),
+                JSON.stringify(notes));
+                break;
+        }
+    }
+};
+
+
 
 app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, '/index.html'));
